@@ -14,7 +14,7 @@ app = Flask(__name__)
 CORS(app)
 
 TEMPLATE_PATH = os.path.join(os.path.dirname(__file__), "Formulario_de_Solicitacao_de_Acesso.xlsx")
-ANTHROPIC_KEY = os.environ.get("ANTHROPIC_API_KEY", "")
+# Chave lida a cada requisição para garantir atualização
 
 # ─────────────────────────────────────────
 # ROTA: Extrair dados via Claude Vision
@@ -22,7 +22,10 @@ ANTHROPIC_KEY = os.environ.get("ANTHROPIC_API_KEY", "")
 @app.route("/extrair-cliente", methods=["POST"])
 def extrair_cliente():
     try:
-        client = anthropic.Anthropic(api_key=ANTHROPIC_KEY)
+        api_key = os.environ.get("ANTHROPIC_API_KEY", "")
+        if not api_key:
+            return jsonify({"ok": False, "error": "ANTHROPIC_API_KEY não configurada no servidor"}), 500
+        client = anthropic.Anthropic(api_key=api_key)
         content = []
 
         for key in ["rg", "conta"]:
@@ -74,7 +77,10 @@ def extrair_cliente():
 @app.route("/extrair-equipamentos", methods=["POST"])
 def extrair_equipamentos():
     try:
-        client = anthropic.Anthropic(api_key=ANTHROPIC_KEY)
+        api_key = os.environ.get("ANTHROPIC_API_KEY", "")
+        if not api_key:
+            return jsonify({"ok": False, "error": "ANTHROPIC_API_KEY não configurada no servidor"}), 500
+        client = anthropic.Anthropic(api_key=api_key)
         content = []
 
         for key in ["eq", "inv"]:
